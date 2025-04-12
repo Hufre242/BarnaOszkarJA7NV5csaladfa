@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">BarnaOszkarJA7NV5csaladfa</string>
+    <string-array name="relationship_options">
+        <item>Apa</item>
+        <item>Anya</item>
+        <item>Testvér</item>
+        <item>Nagyszülő</item>
+        <item>Gyermek</item>
+        <item>Unokatestvér</item>
+    </string-array>
+</resources>

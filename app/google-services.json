@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "898749134296",
+    "project_id": "csaladfaja7nv5",
+    "storage_bucket": "csaladfaja7nv5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:898749134296:android:1a24784e12f688ce74aead",
+        "android_client_info": {
+          "package_name": "com.example.barnaoszkarja7nv5csaladfa"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBu4SIsNuRlppQZMCpIcraM3iyKXwK8M4A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
