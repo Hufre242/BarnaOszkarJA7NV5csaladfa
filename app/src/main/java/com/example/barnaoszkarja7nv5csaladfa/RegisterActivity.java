@@ -10,6 +10,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
+/**
+ * Regisztrációs Activity Firebase autentikációval.
+ */
 public class RegisterActivity extends AppCompatActivity {
 
     private EditText emailInput, passwordInput;
@@ -27,6 +30,9 @@ public class RegisterActivity extends AppCompatActivity {
         findViewById(R.id.registerButton).setOnClickListener(view -> registerUser());
     }
 
+    /**
+     * Új felhasználó regisztrálása email és jelszó alapján.
+     */
     private void registerUser() {
         String email = emailInput.getText().toString();
         String password = passwordInput.getText().toString();

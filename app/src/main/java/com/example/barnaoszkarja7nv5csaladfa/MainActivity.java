@@ -15,21 +15,27 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.firestore.*;
 import com.google.firebase.firestore.FirebaseFirestore;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A MainActivity megjeleníti a családtagok listáját és kezeli a navigációt.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private List<FamilyMember> memberList = new ArrayList<>();
     private FamilyAdapter adapter;
     private FirebaseFirestore db;
+    private FamilyManager familyManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        startService(new Intent(this, NotificationService.class));
 
         recyclerView = findViewById(R.id.familyRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -38,37 +44,36 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         db = FirebaseFirestore.getInstance();
+        familyManager = new FamilyManager();
 
         loadFamilyMembers();
 
         Animation fade = AnimationUtils.loadAnimation(this, R.anim.fade);
         findViewById(R.id.addButton).startAnimation(fade);
 
-
-
         findViewById(R.id.addButton).setOnClickListener(v -> {
             startActivity(new Intent(MainActivity.this, AddFamilyMemberActivity.class));
         });
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadFamilyMembers();
+        // Egy toast, hogy demonstráljuk az életciklus figyelését
+        Toast.makeText(this, "Visszatértél a főképernyőre!", Toast.LENGTH_SHORT).show();
     }
 
     private void loadFamilyMembers() {
-        db.collection("family_members")
-                .addSnapshotListener((snapshots, error) -> {
-                    if (error != null) {
-                        Log.e("FIRESTORE", "Hiba:", error);
-                        return;
-                    }
-
-                    memberList.clear();
-                    for (DocumentSnapshot doc : snapshots) {
-                        FamilyMember member = doc.toObject(FamilyMember.class);
-                        memberList.add(member);
-                    }
-                    adapter.notifyDataSetChanged();
-                });
+        familyManager.getAllMembers().addOnSuccessListener(snapshots -> {
+            memberList.clear();
+            for (DocumentSnapshot doc : snapshots) {
+                FamilyMember member = doc.toObject(FamilyMember.class);
+                memberList.add(member);
+            }
+            adapter.notifyDataSetChanged();
+        });
     }
-
 
     private static class FamilyAdapter extends RecyclerView.Adapter<FamilyAdapter.FamilyViewHolder> {
         private final List<FamilyMember> list;
@@ -99,8 +104,6 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("relationship", member.getRelationship());
                 v.getContext().startActivity(intent);
             });
-
-
         }
 
         @Override

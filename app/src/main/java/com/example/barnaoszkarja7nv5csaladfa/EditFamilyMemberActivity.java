@@ -1,5 +1,6 @@
 package com.example.barnaoszkarja7nv5csaladfa;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -12,12 +13,16 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
+/**
+ * Családtag adatainak szerkesztésére szolgáló Activity.
+ */
 public class EditFamilyMemberActivity extends AppCompatActivity {
 
     private EditText nameInput, birthDateInput, relationshipInput;
     private FirebaseFirestore db;
     private String documentId;
     private ImageView trashAnimation;
+    private FamilyManager familyManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +35,7 @@ public class EditFamilyMemberActivity extends AppCompatActivity {
         trashAnimation = findViewById(R.id.trashAnimation);
 
         db = FirebaseFirestore.getInstance();
+        familyManager = new FamilyManager();
 
         documentId = getIntent().getStringExtra("id");
         nameInput.setText(getIntent().getStringExtra("name"));
@@ -40,6 +46,9 @@ public class EditFamilyMemberActivity extends AppCompatActivity {
         findViewById(R.id.deleteButton).setOnClickListener(v -> deleteMember());
     }
 
+    /**
+     * Családtag adatainak frissítése az adatbázisban.
+     */
     private void updateMember() {
         String name = nameInput.getText().toString().trim();
         String birthDate = birthDateInput.getText().toString().trim();
@@ -51,14 +60,22 @@ public class EditFamilyMemberActivity extends AppCompatActivity {
         }
 
         FamilyMember updated = new FamilyMember(documentId, name, birthDate, relationship);
-        db.collection("family_members").document(documentId)
-                .set(updated)
+        familyManager.updateMember(updated)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "Mentve!", Toast.LENGTH_SHORT).show();
+                    
+                    // Értesítés küldése
+                    Intent notificationIntent = new Intent(this, NotificationService.class);
+                    notificationIntent.putExtra("member_name", name);
+                    startService(notificationIntent);
+                    
                     finish();
                 });
     }
 
+    /**
+     * Családtag törlése animációval és adatbázisból való eltávolítással.
+     */
     private void deleteMember() {
         trashAnimation.setVisibility(View.VISIBLE);
         Animation anim = AnimationUtils.loadAnimation(this, R.anim.shake);
@@ -66,8 +83,7 @@ public class EditFamilyMemberActivity extends AppCompatActivity {
 
         // 500ms után törlés, hogy az animáció lemenjen
         trashAnimation.postDelayed(() -> {
-            db.collection("family_members").document(documentId)
-                    .delete()
+            familyManager.deleteMember(documentId)
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(this, "Törölve!", Toast.LENGTH_SHORT).show();
                         finish();

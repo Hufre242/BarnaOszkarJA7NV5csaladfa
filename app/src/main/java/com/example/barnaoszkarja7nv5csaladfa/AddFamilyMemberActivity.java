@@ -20,6 +20,7 @@ public class AddFamilyMemberActivity extends AppCompatActivity {
     private EditText nameInput, birthDateInput;
     private Spinner relationshipSpinner;
     private FirebaseFirestore db;
+    private FamilyManager familyManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -31,6 +32,7 @@ public class AddFamilyMemberActivity extends AppCompatActivity {
         relationshipSpinner = findViewById(R.id.relationshipSpinner);
 
         db = FirebaseFirestore.getInstance();
+        familyManager = new FamilyManager();
 
         // Spinner feltöltése
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
@@ -70,11 +72,15 @@ public class AddFamilyMemberActivity extends AppCompatActivity {
         String id = UUID.randomUUID().toString();
         FamilyMember newMember = new FamilyMember(id, name, birthDate, relationship);
 
-        db.collection("family_members")
-                .document(id)
-                .set(newMember)
+        familyManager.addMember(newMember)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "Családtag elmentve!", Toast.LENGTH_SHORT).show();
+                    
+                    // Értesítés küldése
+                    Intent notificationIntent = new Intent(this, NotificationService.class);
+                    notificationIntent.putExtra("member_name", name);
+                    startService(notificationIntent);
+                    
                     Intent intent = new Intent(AddFamilyMemberActivity.this, MainActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);

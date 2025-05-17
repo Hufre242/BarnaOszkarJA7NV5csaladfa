@@ -9,6 +9,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
+/**
+ * Bejelentkezési Activity Firebase autentikációval.
+ */
 public class LoginActivity extends AppCompatActivity {
 
     private EditText emailInput, passwordInput;
@@ -29,6 +32,9 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Felhasználó bejelentkeztetése email és jelszó alapján.
+     */
     private void loginUser() {
         String email = emailInput.getText().toString();
         String password = passwordInput.getText().toString();

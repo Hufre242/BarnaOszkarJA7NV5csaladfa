@@ -16,3 +16,15 @@ Ez az Android alkalmazás lehetővé teszi, hogy családtagokat adj hozzá, szer
 
 ## 🛠️ Telepítés
 -Realesben ott az apk
+
+## 🖥️ Reszponzivitás
+- Külön landscape (fekvő) elrendezés a főképernyőhöz
+- ConstraintLayout és LinearLayout kombinációja
+
+## 🎨 Erőforrások használata
+- Színek, dimenziók, stílusok külön resource fájlokban
+
+## 📝 Kódminőség
+- Javadoc és inline kommentek a fontosabb osztályoknál
+- FamilyManager minta
+- Szerviz (NotificationService) háttérműveletekhez
